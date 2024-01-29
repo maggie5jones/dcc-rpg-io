@@ -1,0 +1,28 @@
+name: Style Checks
+
+on: push
+
+# Make sure CI fails on all warnings, including Clippy lints
+env:
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  style_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: No target/ directory
+        run: |
+          git ls-files | grep target || exit 0
+          echo "Please do not commit the target/ directory, delete it with git rm -r --cached and commit again." 
+          exit 1
+      - name: Formatting check
+        run: |
+          cargo fmt --check && exit 0
+          echo "Code formatting issue. Please run cargo fmt and commit again."
+          exit 1
+      - name: Run Clippy
+        run: |
+          cargo clippy --all-targets --all-features && exit 0
+          echo "Code style issue or warning. Please run cargo clippy and fix any warnings or errors."
+          exit 1
