@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::io;
 
-pub fn roll(num_dice: u32, num_sides: u32) -> u32 {
+pub fn roll(num_dice: i32, num_sides: i32) -> i32 {
     let mut rng = rand::thread_rng();
     let mut total = 0;
 
@@ -10,10 +10,14 @@ pub fn roll(num_dice: u32, num_sides: u32) -> u32 {
         total += roll_result;
     }
 
+    if total == 0 {
+        total = roll(num_dice, num_sides);
+    }
+
     total
 }
 
-pub fn modifier(score: u32) -> i32 {
+pub fn modifier(score: i32) -> i32 {
     if score <= 3 {
         return -3;
     } else if score <= 5 {
@@ -42,7 +46,7 @@ pub fn get_user_input() -> String {
 
     io::stdin()
         .read_line(&mut input)
-        .expect("Failed to read user input");
+        .expect("failed to read user input");
 
     input.trim().to_string()
 }
